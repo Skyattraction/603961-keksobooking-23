@@ -1,1 +1,1 @@
-import './objects.js';
+import './similar-items.js';
