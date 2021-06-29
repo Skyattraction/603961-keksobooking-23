@@ -3,9 +3,9 @@ export const disableForm = function(formArray) {
     const form = document.querySelector(`.${formArray[ind]}`);
     form.classList.add(`${formArray[ind]}--disabled`);
     const inputs = form.elements;
-    for (let jnd = 0; jnd < inputs.length; jnd++) {
-      inputs[jnd].disabled = true;
-    }
+    Array.from(inputs).forEach((inputItem) => {
+      inputItem.disabled = true;
+    });
   }
 };
 
@@ -16,9 +16,9 @@ export const enableForm = function(formArray) {
     const form = document.querySelector(`.${formArray[ind]}`);
     form.classList.remove(`${formArray[ind]}--disabled`);
     const inputs = form.elements;
-    for (let jnd = 0; jnd < inputs.length; jnd++) {
-      inputs[jnd].disabled = false;
-    }
+    Array.from(inputs).forEach((inputItem) => {
+      inputItem.disabled = false;
+    });
   }
 };
 
