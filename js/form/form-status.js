@@ -9,8 +9,6 @@ export const disableForm = function(formArray) {
   }
 };
 
-disableForm(['ad-form', 'map__filters']);
-
 export const enableForm = function(formArray) {
   for (let ind = 0; ind < formArray.length; ind++) {
     const form = document.querySelector(`.${formArray[ind]}`);
@@ -22,4 +20,4 @@ export const enableForm = function(formArray) {
   }
 };
 
-enableForm(['ad-form', 'map__filters']);
+disableForm(['ad-form', 'map__filters']);
