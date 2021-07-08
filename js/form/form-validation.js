@@ -1,9 +1,14 @@
+import {initialCoordinatesValue} from '../map.js';
+
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
 const MAX_ROOM_PRICE = 1000000;
 
 const adForm = document.querySelector('.ad-form');
+const adFormSubmitButton = adForm.querySelector('.ad-form__submit');
+const inputs = adForm.getElementsByTagName('input');
 const adTitle = adForm.querySelector('input[name="title"]');
+const adAddress = adForm.querySelector('input[name="address"]');
 const adPrice = adForm.querySelector('input[name="price"]');
 const adRooms = adForm.querySelector('select[name="rooms"]');
 const adGuests = adForm.querySelector('select[name="capacity"]');
@@ -12,11 +17,12 @@ const adType = adForm.querySelector('select[name="type"]');
 const timeIn = adForm.querySelector('select[name="timein"]');
 const timeOut = adForm.querySelector('select[name="timeout"]');
 
-let adTypeValue = 'flat';
-let adTypeContent = 'Квартира';
-let valueRooms = 1;
-let minRoomPrice = 1000;
-let timeValue = '12:00';
+let stopSubmit;
+let adTypeValue;
+let adTypeContent;
+let valueRooms;
+let minRoomPrice;
+let timeValue;
 
 const setInitialGuestOptions = function() {
   Array.from(adGuestsOptions).forEach((option) => {
@@ -28,7 +34,33 @@ const setInitialGuestOptions = function() {
   });
 };
 
-setInitialGuestOptions();
+const setAllInitialValues = function() {
+  stopSubmit = false;
+  adTypeValue = 'flat';
+  adTypeContent = 'Квартира';
+  valueRooms = 1;
+  minRoomPrice = 1000;
+  timeValue = '12:00';
+  adAddress.value = initialCoordinatesValue;
+  setInitialGuestOptions();
+  Array.from(inputs).forEach((inputItem) => {
+    inputItem.style.border = '';
+  });
+};
+setAllInitialValues();
+
+adFormSubmitButton.addEventListener('click', (evt) => {
+  Array.from(inputs).forEach((inputItem) => {
+    if (inputItem.checkValidity() === false) {
+      stopSubmit = true;
+      inputItem.style.border = '3px solid #FF4B4B';
+    }
+  });
+
+  if (stopSubmit) {
+    evt.preventDefault();
+  }
+});
 
 adTitle.addEventListener('input', () => {
   const valueLength = adTitle.value.length;
@@ -133,3 +165,5 @@ timeOut.addEventListener('change', () => {
   timeValue = timeOut.value;
   timeIn.value = timeValue;
 });
+
+export {setAllInitialValues};

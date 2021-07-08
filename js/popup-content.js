@@ -62,7 +62,7 @@ export const createCustomPopup = (point) => {
   cardElement.querySelector('.popup__text--capacity').textContent = `${rooms} ${roomsQuantity(rooms)} для ${point.offer.guests} ${guestQuantity(guests)}`;
   cardElement.querySelector('.popup__text--time').textContent = `Заезд после ${point.offer.checkin}, выезд до  ${point.offer.checkout}`;
 
-  if(point.offer.features.length) {
+  if(point.offer.features) {
     cardElement.querySelector('.popup__features').innerHTML = '';
     featuresList(point.offer.features, cardElement.querySelector('.popup__features'));
   } else {
@@ -75,7 +75,7 @@ export const createCustomPopup = (point) => {
     cardElement.querySelector('.popup__description').remove();
   }
 
-  if (point.offer.photos.length) {
+  if (point.offer.photos) {
     cardElement.querySelector('.popup__photos').innerHTML = '';
     photosList(point.offer.photos, cardElement.querySelector('.popup__photos'));
   } else {
