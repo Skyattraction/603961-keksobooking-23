@@ -63,6 +63,8 @@ adFormSubmitButton.addEventListener('click', (evt) => {
 });
 
 adTitle.addEventListener('input', () => {
+  stopSubmit = false;
+  adTitle.style.border = '';
   const valueLength = adTitle.value.length;
 
   if (valueLength < MIN_TITLE_LENGTH) {
@@ -141,6 +143,8 @@ adType.addEventListener('change', () => {
 });
 
 adPrice.addEventListener('input', () => {
+  stopSubmit = false;
+  adPrice.style.border = '';
   const valueLength = adPrice.value;
 
   if (valueLength > MAX_ROOM_PRICE) {

@@ -107,10 +107,3 @@ export const showErrorAlert = (message) => {
     alertContainer.remove();
   };
 };
-
-export const onPopupEscKeydown = (cb, evt) => {
-  if (evt.key === 'Escape' || evt.key === 'Esc') {
-    evt.preventDefault();
-    cb();
-  }
-};

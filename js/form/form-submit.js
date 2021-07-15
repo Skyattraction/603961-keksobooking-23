@@ -1,4 +1,3 @@
-import {onPopupEscKeydown} from '../utils.js';
 import {sendData} from '../api.js';
 import {initialCoordinates, mainPinMarker} from '../map.js';
 import {setAllInitialValues} from './form-validation.js';
@@ -6,6 +5,14 @@ import {setAllInitialValues} from './form-validation.js';
 const body = document.querySelector('body');
 const adForm = document.querySelector('.ad-form');
 const resetButton = document.querySelector('.ad-form__reset');
+
+const closePopupOnKeydown = function(evt) {
+  if (evt.key === 'Escape' || evt.key === 'Esc') {
+    evt.preventDefault();
+    const messagePopover = document.querySelector('.popover-created');
+    body.removeChild(messagePopover);
+  }
+};
 
 const resetForm = () => {
   adForm.reset();
@@ -19,9 +26,7 @@ resetButton.addEventListener('click', (evt) => {
 });
 
 const closePopup = (closeCallback, button) => {
-  document.addEventListener('keydown', (evt) => {
-    onPopupEscKeydown(closeCallback, evt);
-  });
+  document.addEventListener('keydown', closePopupOnKeydown);
   document.addEventListener('click', closeCallback);
   if (button) {
     button.addEventListener('click', closeCallback);
@@ -30,9 +35,7 @@ const closePopup = (closeCallback, button) => {
 
 const closeMessage = () => {
   const messagePopover = document.querySelector('.popover-created');
-  document.removeEventListener('keydown', (evt) => {
-    onPopupEscKeydown(closeMessage, evt);
-  });
+  document.removeEventListener('keydown', closePopupOnKeydown);
   document.removeEventListener('click', closeMessage);
   body.removeChild(messagePopover);
 };
