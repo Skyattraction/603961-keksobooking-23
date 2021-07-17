@@ -6,27 +6,27 @@ const typesMap = {
   'hotel': 'Отель',
 };
 
-function typesForCard(type) {
+const mapTypesForCard = function(type) {
   return typesMap[type];
-}
+};
 
-function roomsQuantity(roomsNumber) {
+const mapRoomsQuantity = function(roomsNumber) {
   if(roomsNumber === 1) {
     return 'комната';
   } else if (roomsNumber > 1 && roomsNumber < 5) {
     return 'комнаты';
   }
   return 'комнат';
-}
+};
 
-function guestQuantity(guestsNumber) {
+const mapGuestQuantity = function(guestsNumber) {
   if(guestsNumber === 1) {
     return 'гостя';
   }
   return 'гостей';
-}
+};
 
-function photosList(photos, container) {
+const createPhotosList = function(photos, container) {
   for(let ind = 0; ind < photos.length; ind++) {
     const photoElement = document.createElement('img');
     photoElement.width = 45;
@@ -36,9 +36,9 @@ function photosList(photos, container) {
     photoElement.src = photos[ind];
     container.append(photoElement);
   }
-}
+};
 
-function featuresList(features, container) {
+const createFeaturesList = function(features, container) {
   for(let ind = 0; ind < features.length; ind++) {
     const featureElement = document.createElement('li');
     const featureClass = `popup__feature--${features[ind]}`;
@@ -47,9 +47,9 @@ function featuresList(features, container) {
     featureElement.ariaLabel = features[ind];
     container.append(featureElement);
   }
-}
+};
 
-export const createCustomPopup = (point) => {
+const createCustomPopup = (point) => {
   const cardTemplate = document.querySelector('#card').content.querySelector('.popup');
   const cardElement = cardTemplate.cloneNode(true);
   const rooms = point.offer.rooms;
@@ -58,13 +58,13 @@ export const createCustomPopup = (point) => {
   cardElement.querySelector('.popup__title').textContent = point.offer.title;
   cardElement.querySelector('.popup__text--address').textContent = point.offer.address;
   cardElement.querySelector('.popup__text--price').textContent = `${point.offer.price} ₽/ночь`;
-  cardElement.querySelector('.popup__type').textContent = typesForCard(point.offer.type);
-  cardElement.querySelector('.popup__text--capacity').textContent = `${rooms} ${roomsQuantity(rooms)} для ${point.offer.guests} ${guestQuantity(guests)}`;
+  cardElement.querySelector('.popup__type').textContent = mapTypesForCard(point.offer.type);
+  cardElement.querySelector('.popup__text--capacity').textContent = `${rooms} ${mapRoomsQuantity(rooms)} для ${point.offer.guests} ${mapGuestQuantity(guests)}`;
   cardElement.querySelector('.popup__text--time').textContent = `Заезд после ${point.offer.checkin}, выезд до  ${point.offer.checkout}`;
 
   if(point.offer.features) {
     cardElement.querySelector('.popup__features').innerHTML = '';
-    featuresList(point.offer.features, cardElement.querySelector('.popup__features'));
+    createFeaturesList(point.offer.features, cardElement.querySelector('.popup__features'));
   } else {
     cardElement.querySelector('.popup__features').remove();
   }
@@ -77,7 +77,7 @@ export const createCustomPopup = (point) => {
 
   if (point.offer.photos) {
     cardElement.querySelector('.popup__photos').innerHTML = '';
-    photosList(point.offer.photos, cardElement.querySelector('.popup__photos'));
+    createPhotosList(point.offer.photos, cardElement.querySelector('.popup__photos'));
   } else {
     cardElement.querySelector('.popup__photos').remove();
   }
@@ -87,3 +87,5 @@ export const createCustomPopup = (point) => {
   }
   return cardElement;
 };
+
+export {createCustomPopup};

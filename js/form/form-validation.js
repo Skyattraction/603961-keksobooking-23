@@ -41,6 +41,7 @@ const setAllInitialValues = function() {
   valueRooms = 1;
   minRoomPrice = 1000;
   timeValue = '12:00';
+  adPrice.placeholder = '1000';
   adAddress.value = initialCoordinatesValue;
   setInitialGuestOptions();
   Array.from(inputs).forEach((inputItem) => {
@@ -63,6 +64,8 @@ adFormSubmitButton.addEventListener('click', (evt) => {
 });
 
 adTitle.addEventListener('input', () => {
+  stopSubmit = false;
+  adTitle.style.border = '';
   const valueLength = adTitle.value.length;
 
   if (valueLength < MIN_TITLE_LENGTH) {
@@ -118,7 +121,6 @@ adRooms.addEventListener('change', () => {
 adType.addEventListener('change', () => {
   adTypeValue = adType.value;
   adTypeContent = adType.options[adType.selectedIndex].text;
-
   switch (adTypeValue) {
     case 'bungalow':
       minRoomPrice = 0;
@@ -138,9 +140,12 @@ adType.addEventListener('change', () => {
     default:
       throw new Error('Incorrect type');
   }
+  adPrice.placeholder = minRoomPrice;
 });
 
 adPrice.addEventListener('input', () => {
+  stopSubmit = false;
+  adPrice.style.border = '';
   const valueLength = adPrice.value;
 
   if (valueLength > MAX_ROOM_PRICE) {

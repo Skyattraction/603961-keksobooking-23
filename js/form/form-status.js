@@ -1,4 +1,4 @@
-export const disableForm = function(formArray) {
+const disableForm = function(formArray) {
   for (let ind = 0; ind < formArray.length; ind++) {
     const form = document.querySelector(`.${formArray[ind]}`);
     form.classList.add(`${formArray[ind]}--disabled`);
@@ -9,7 +9,7 @@ export const disableForm = function(formArray) {
   }
 };
 
-export const enableForm = function(formArray) {
+const enableForm = function(formArray) {
   for (let ind = 0; ind < formArray.length; ind++) {
     const form = document.querySelector(`.${formArray[ind]}`);
     form.classList.remove(`${formArray[ind]}--disabled`);
@@ -21,3 +21,5 @@ export const enableForm = function(formArray) {
 };
 
 disableForm(['ad-form', 'map__filters']);
+
+export {enableForm};
