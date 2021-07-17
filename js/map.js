@@ -6,6 +6,8 @@ import {showErrorAlert} from './utils.js';
 import * as filters from './filter.js';
 
 const RERENDER_DELAY = 500;
+const COORDINATES_ROUND_NUMBER = 5;
+const MAP_SCALE = 10;
 
 const initialCoordinates =  {
   lat: 35.65283,
@@ -83,7 +85,7 @@ map.on('load', () => {
   .setView({
     lat: 35.65283,
     lng: 139.83947,
-  }, 10);
+  }, MAP_SCALE);
 
 L.tileLayer(
   'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -113,7 +115,7 @@ mainPinMarker.addTo(map);
 
 mainPinMarker.on('moveend', (evt) => {
   coordinates = evt.target.getLatLng();
-  adAddress.value = `Lat: ${coordinates.lat.toFixed(5)} Lng: ${coordinates.lng.toFixed(5)}`;
+  adAddress.value = `Lat: ${coordinates.lat.toFixed(COORDINATES_ROUND_NUMBER)} Lng: ${coordinates.lng.toFixed(COORDINATES_ROUND_NUMBER)}`;
 });
 
-export {initialCoordinates, initialCoordinatesValue, mainPinMarker, map, markerGroup, createMarkers};
+export {initialCoordinates, initialCoordinatesValue, mainPinMarker, map, markerGroup, getAdObjects, createMarkers};

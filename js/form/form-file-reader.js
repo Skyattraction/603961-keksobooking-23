@@ -9,9 +9,9 @@ const createFileReader = function(fileField, preview) {
   fileField.addEventListener('change', () => {
     const file = fileField.files[0];
     const fileName = file.name.toLowerCase();
-    const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+    const isMatches = FILE_TYPES.some((it) => fileName.endsWith(it));
 
-    if (matches) {
+    if (isMatches) {
       const reader = new FileReader();
       reader.addEventListener('load', () => {
         if(preview.childNodes.length) {

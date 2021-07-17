@@ -1,5 +1,7 @@
 import {markerGroup, createMarkers} from './map.js';
 
+const DISPLAYED_ADS_NUMBER = 10;
+
 const filterForm = document.querySelector('.map__filters');
 const housingTypeFilter = filterForm.querySelector('#housing-type');
 const housingPriceFilter = filterForm.querySelector('#housing-price');
@@ -54,24 +56,24 @@ const filterByGuests = (adItem) => {
 
 const filterByFeatures = (adItem) => {
   let rank = 0;
-  const featuresAdArray = adItem.offer.features;
-  const featuresFilterArray = [];
-  const featuresInputArray = housingFeaturesFilter.querySelectorAll('input:checked');
-  Array.from(featuresInputArray).forEach((inputItem) => {
-    featuresFilterArray.push(inputItem.value);
+  const initialFeatures = adItem.offer.features;
+  const filteredFeatures = [];
+  const featuresInputs = housingFeaturesFilter.querySelectorAll('input:checked');
+  Array.from(featuresInputs).forEach((inputItem) => {
+    filteredFeatures.push(inputItem.value);
   });
 
-  if(featuresAdArray) {
-    const featuresAdArraySorted = featuresAdArray.slice().sort();
-    const featuresFilterArraySorted = featuresFilterArray.slice().sort();
-    const ffa = featuresAdArraySorted.filter((elem) => featuresFilterArraySorted.indexOf(elem) > -1).length;
+  if(initialFeatures) {
+    const initialSortedFeatures = initialFeatures.slice().sort();
+    const filteredSortedFeatures = filteredFeatures.slice().sort();
+    const ffa = initialSortedFeatures.filter((elem) => filteredSortedFeatures.indexOf(elem) > -1).length;
 
-    if(ffa === featuresFilterArraySorted.length) {
+    if(ffa === filteredSortedFeatures.length) {
       rank = 1;
     }
   }
 
-  if(featuresFilterArray.length === 0) {
+  if(filteredFeatures.length === 0) {
     rank = 1;
   }
 
@@ -86,7 +88,7 @@ const addFilters = function(items) {
     .filter(filterByRooms)
     .filter(filterByGuests)
     .filter(filterByFeatures)
-    .slice(0, 10);
+    .slice(0, DISPLAYED_ADS_NUMBER);
 
   createMarkers(filteredItems);
 
@@ -127,4 +129,4 @@ const setFilterFeaturesClick = (cb) => {
     cb();
   });
 };
-export {addFilters, setFilterTypeChange, setFilterPriceChange, setFilterRoomsChange, setFilterGuestsChange, setFilterFeaturesClick};
+export {filterForm, addFilters, setFilterTypeChange, setFilterPriceChange, setFilterRoomsChange, setFilterGuestsChange, setFilterFeaturesClick};

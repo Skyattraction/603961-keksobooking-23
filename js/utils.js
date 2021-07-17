@@ -4,7 +4,7 @@ https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Ma
 Можно задать большее и меньшее число в любом порядке.
 */
 
-export function getRandomInt(min, max) {
+const getRandomInt = function(min, max) {
   if(min >= 0 && max >= 0) {
     min = Math.floor(min);
     max = Math.floor(max);
@@ -18,7 +18,7 @@ export function getRandomInt(min, max) {
     const seed = Math.floor(Math.random() * (delta + 1));
     return seed + min;
   }
-}
+};
 
 /* Функция getRandomFloat основана на примере по ссылке:
 https://learn.javascript.ru/task/random-min-max
@@ -26,7 +26,7 @@ https://learn.javascript.ru/task/random-min-max
 В параметре задается количство символов после запятой.
 Можно задать большее и меньшее число в любом порядке.
 */
-export function getRandomFloat(min, max, symbolsAfterComma) {
+const getRandomFloat = function(min, max, symbolsAfterComma) {
   if(min >= 0 && max >= 0 && symbolsAfterComma >= 0) {
     if(min > max) {
       const cacheMin = min;
@@ -39,13 +39,13 @@ export function getRandomFloat(min, max, symbolsAfterComma) {
     const seed = (seedInteger + min).toFixed(symbolsAfterComma);
     return Number(seed);
   }
-}
+};
 
-export const getRandomArrayElement = function (array) {
+const getRandomArrayElement = function (array) {
   return array[getRandomInt(0, array.length - 1)];
 };
 
-export const getUniqueRandomArrayElement = (min, max) => {
+const getUniqueRandomArrayElement = (min, max) => {
   const previousValues = [];
 
   return () => {
@@ -61,7 +61,7 @@ export const getUniqueRandomArrayElement = (min, max) => {
   };
 };
 
-export const getFewRandomArrayElements = function (array) {
+const getFewRandomArrayElements = function (array) {
   const quantity = getRandomInt(0, array.length);
   const elements = [];
   const uniqueArrayElement = getUniqueRandomArrayElement(0, quantity - 1);
@@ -73,7 +73,7 @@ export const getFewRandomArrayElements = function (array) {
   return elements;
 };
 
-export const showErrorAlert = (message) => {
+const showErrorAlert = (message) => {
   const alertContainer = document.createElement('div');
   alertContainer.style.zIndex = 1000;
   alertContainer.style.position = 'fixed';
@@ -107,3 +107,5 @@ export const showErrorAlert = (message) => {
     alertContainer.remove();
   };
 };
+
+export {getRandomInt, getRandomFloat, getRandomArrayElement, getUniqueRandomArrayElement, getFewRandomArrayElements, showErrorAlert};

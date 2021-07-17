@@ -1,5 +1,6 @@
 import {sendData} from '../api.js';
-import {initialCoordinates, mainPinMarker} from '../map.js';
+import {filterForm} from '../filter.js';
+import {initialCoordinates, mainPinMarker, getAdObjects} from '../map.js';
 import {setAllInitialValues} from './form-validation.js';
 
 const body = document.querySelector('body');
@@ -16,16 +17,13 @@ const closePopupOnKeydown = function(evt) {
 
 const resetForm = () => {
   adForm.reset();
+  filterForm.reset();
+  getAdObjects();
   setAllInitialValues();
   mainPinMarker.setLatLng(initialCoordinates);
 };
 
-resetButton.addEventListener('click', (evt) => {
-  evt.preventDefault();
-  resetForm();
-});
-
-const closePopup = (closeCallback, button) => {
+const closePopupWithCallback = (closeCallback, button) => {
   document.addEventListener('keydown', closePopupOnKeydown);
   document.addEventListener('click', closeCallback);
   if (button) {
@@ -33,10 +31,10 @@ const closePopup = (closeCallback, button) => {
   }
 };
 
-const closeMessage = () => {
+const removePopup = () => {
   const messagePopover = document.querySelector('.popover-created');
   document.removeEventListener('keydown', closePopupOnKeydown);
-  document.removeEventListener('click', closeMessage);
+  document.removeEventListener('click', removePopup);
   body.removeChild(messagePopover);
 };
 
@@ -59,7 +57,7 @@ const showSuccessMessage = function() {
   const messageElement = messageTemplate.cloneNode(true);
   messageElement.classList.add('popover-created');
   body.appendChild(messageElement);
-  closePopup(closeMessage);
+  closePopupWithCallback(removePopup);
 };
 
 const showErrorMessage = function() {
@@ -68,7 +66,12 @@ const showErrorMessage = function() {
   messageElement.classList.add('popover-created');
   const errorButton = document.querySelector('.error__button');
   body.appendChild(messageElement);
-  closePopup(closeMessage, errorButton);
+  closePopupWithCallback(removePopup, errorButton);
 };
+
+resetButton.addEventListener('click', (evt) => {
+  evt.preventDefault();
+  resetForm();
+});
 
 setUserFormSubmit(showSuccessMessage, showErrorMessage);

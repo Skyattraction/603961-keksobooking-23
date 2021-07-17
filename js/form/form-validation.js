@@ -41,6 +41,7 @@ const setAllInitialValues = function() {
   valueRooms = 1;
   minRoomPrice = 1000;
   timeValue = '12:00';
+  adPrice.placeholder = '1000';
   adAddress.value = initialCoordinatesValue;
   setInitialGuestOptions();
   Array.from(inputs).forEach((inputItem) => {
@@ -120,7 +121,6 @@ adRooms.addEventListener('change', () => {
 adType.addEventListener('change', () => {
   adTypeValue = adType.value;
   adTypeContent = adType.options[adType.selectedIndex].text;
-
   switch (adTypeValue) {
     case 'bungalow':
       minRoomPrice = 0;
@@ -140,6 +140,7 @@ adType.addEventListener('change', () => {
     default:
       throw new Error('Incorrect type');
   }
+  adPrice.placeholder = minRoomPrice;
 });
 
 adPrice.addEventListener('input', () => {
