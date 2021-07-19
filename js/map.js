@@ -8,6 +8,8 @@ import * as filters from './filter.js';
 const RERENDER_DELAY = 500;
 const COORDINATES_ROUND_NUMBER = 5;
 const MAP_SCALE = 10;
+const MAIN_MARKER_ICON_SIZE = 52;
+const AD_MARKER_ICON_SIZE = 40;
 
 const initialCoordinates =  {
   lat: 35.65283,
@@ -16,7 +18,7 @@ const initialCoordinates =  {
 
 let coordinates = initialCoordinates;
 
-const initialCoordinatesValue = `Lat: ${coordinates.lat} Lng: ${coordinates.lng}`;
+const initialCoordinatesValue = `${coordinates.lat}, ${coordinates.lng}`;
 const adForm = document.querySelector('.ad-form');
 const adAddress = adForm.querySelector('input[name="address"]');
 
@@ -24,14 +26,14 @@ const map = L.map('map-canvas');
 
 const markerGroup = L.layerGroup().addTo(map);
 
-const createMarkers = function(items) {
+const createMarkers = (items) => {
   items.forEach((adItem) => {
     const lat = adItem.location.lat;
     const lng = adItem.location.lng;
     const icon = L.icon({
       iconUrl: 'img/pin.svg',
-      iconSize: [40, 40],
-      iconAnchor: [20, 40],
+      iconSize: [AD_MARKER_ICON_SIZE, AD_MARKER_ICON_SIZE],
+      iconAnchor: [AD_MARKER_ICON_SIZE/2, AD_MARKER_ICON_SIZE],
     });
     const marker = L.marker(
       {
@@ -51,29 +53,13 @@ const getAdObjects = getData(
   (ads) => {
     const filteredAdList = ads.slice(0,10);
     createMarkers(filteredAdList);
-    filters.setFilterTypeChange(debounce(
-      () => filters.addFilters(ads),
-      RERENDER_DELAY,
-    ));
-    filters.setFilterPriceChange(debounce(
-      () => filters.addFilters(ads),
-      RERENDER_DELAY,
-    ));
-    filters.setFilterRoomsChange(debounce(
-      () => filters.addFilters(ads),
-      RERENDER_DELAY,
-    ));
-    filters.setFilterGuestsChange(debounce(
-      () => filters.addFilters(ads),
-      RERENDER_DELAY,
-    ));
-    filters.setFilterFeaturesClick(debounce(
-      () => filters.addFilters(ads),
+    filters.setFilterFormChange(debounce(
+      () => filters.addFilteredMarkers(ads),
       RERENDER_DELAY,
     ));
   },
-  (err) => {
-    showErrorAlert(err);
+  () => {
+    showErrorAlert();
   },
 );
 
@@ -82,10 +68,7 @@ map.on('load', () => {
   adAddress.value = initialCoordinatesValue;
   getAdObjects();
 })
-  .setView({
-    lat: 35.65283,
-    lng: 139.83947,
-  }, MAP_SCALE);
+  .setView(initialCoordinates, MAP_SCALE);
 
 L.tileLayer(
   'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -96,15 +79,12 @@ L.tileLayer(
 
 const mainPinIcon = L.icon({
   iconUrl: 'img/main-pin.svg',
-  iconSize: [52, 52],
-  iconAnchor: [26, 52],
+  iconSize: [MAIN_MARKER_ICON_SIZE, MAIN_MARKER_ICON_SIZE],
+  iconAnchor: [MAIN_MARKER_ICON_SIZE/2, MAIN_MARKER_ICON_SIZE],
 });
 
 const mainPinMarker = L.marker(
-  {
-    lat: 35.65283,
-    lng: 139.83947,
-  },
+  initialCoordinates,
   {
     draggable: true,
     icon: mainPinIcon,
@@ -112,10 +92,9 @@ const mainPinMarker = L.marker(
 );
 
 mainPinMarker.addTo(map);
-
-mainPinMarker.on('moveend', (evt) => {
+mainPinMarker.on('move', (evt) => {
   coordinates = evt.target.getLatLng();
-  adAddress.value = `Lat: ${coordinates.lat.toFixed(COORDINATES_ROUND_NUMBER)} Lng: ${coordinates.lng.toFixed(COORDINATES_ROUND_NUMBER)}`;
+  adAddress.value = `${coordinates.lat.toFixed(COORDINATES_ROUND_NUMBER)}, ${coordinates.lng.toFixed(COORDINATES_ROUND_NUMBER)}`;
 });
 
 export {initialCoordinates, initialCoordinatesValue, mainPinMarker, map, markerGroup, getAdObjects, createMarkers};

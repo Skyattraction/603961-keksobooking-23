@@ -1,6 +1,10 @@
+import {isArrayIncludesOtherArray} from './utils.js';
 import {markerGroup, createMarkers} from './map.js';
 
 const DISPLAYED_ADS_NUMBER = 10;
+const ROOM_PRICE_LOW = 10000;
+const ROOM_PRICE_HIGH = 50000;
+const GUESTS_QUANTITY_NOT_FOR_GUESTS = 100;
 
 const filterForm = document.querySelector('.map__filters');
 const housingTypeFilter = filterForm.querySelector('#housing-type');
@@ -9,124 +13,68 @@ const housingRoomsFilter = filterForm.querySelector('#housing-rooms');
 const housingGuestsFilter = filterForm.querySelector('#housing-guests');
 const housingFeaturesFilter = filterForm.querySelector('#housing-features');
 
-const filterByType = (adItem) => {
-  let rank = 0;
 
-  if (housingTypeFilter.value === adItem.offer.type || housingTypeFilter.value === 'any') {
-    rank = 1;
-  }
+const filterByType = (adItem) => (housingTypeFilter.value === adItem.offer.type || housingTypeFilter.value === 'any');
 
-  return rank > 0;
-};
+const filterByPrice = (adItem) => (
+  (housingPriceFilter.value === 'middle' && adItem.offer.price >= ROOM_PRICE_LOW && adItem.offer.price <= ROOM_PRICE_HIGH) ||
+  (housingPriceFilter.value === 'low' && adItem.offer.price < ROOM_PRICE_LOW) ||
+  (housingPriceFilter.value === 'high' && adItem.offer.price > ROOM_PRICE_HIGH) ||
+  housingPriceFilter.value === 'any');
 
-const filterByPrice = (adItem) => {
-  let rank = 0;
+const filterByRooms = (adItem) => (
+  housingRoomsFilter.value === (adItem.offer.rooms).toString() ||
+  housingRoomsFilter.value === 'any');
 
-  if ((housingPriceFilter.value === 'middle' && adItem.offer.price >= 10000 && adItem.offer.price <= 50000) ||
-  (housingPriceFilter.value === 'low' && adItem.offer.price < 10000) ||
-  (housingPriceFilter.value === 'high' && adItem.offer.price > 50000) ||
-  housingPriceFilter.value === 'any') {
-    rank = 1;
-  }
-
-  return rank > 0;
-};
-
-const filterByRooms = (adItem) => {
-  let rank = 0;
-  if((housingRoomsFilter.value === (adItem.offer.rooms).toString()) ||
-    housingRoomsFilter.value === 'any') {
-    rank = 1;
-  }
-
-  return rank > 0;
-};
-
-const filterByGuests = (adItem) => {
-  let rank = 0;
-
-  if((housingGuestsFilter.value === (adItem.offer.guests).toString()) ||
-    (housingGuestsFilter.value === '0' && adItem.offer.guests === 100) ||
-    housingGuestsFilter.value === 'any') {
-    rank = 1;
-  }
-
-  return rank > 0;
-};
+const filterByGuests = (adItem) => (
+  housingGuestsFilter.value === (adItem.offer.guests).toString() ||
+  (housingGuestsFilter.value === '0' && adItem.offer.guests === GUESTS_QUANTITY_NOT_FOR_GUESTS) ||
+  housingGuestsFilter.value === 'any');
 
 const filterByFeatures = (adItem) => {
-  let rank = 0;
   const initialFeatures = adItem.offer.features;
   const filteredFeatures = [];
   const featuresInputs = housingFeaturesFilter.querySelectorAll('input:checked');
-  Array.from(featuresInputs).forEach((inputItem) => {
+  featuresInputs.forEach((inputItem) => {
     filteredFeatures.push(inputItem.value);
   });
 
-  if(initialFeatures) {
-    const initialSortedFeatures = initialFeatures.slice().sort();
-    const filteredSortedFeatures = filteredFeatures.slice().sort();
-    const ffa = initialSortedFeatures.filter((elem) => filteredSortedFeatures.indexOf(elem) > -1).length;
+  if(filteredFeatures.length === 0) {
+    return true;
+  }
 
-    if(ffa === filteredSortedFeatures.length) {
-      rank = 1;
+  if(initialFeatures && filteredFeatures.length) {
+    return isArrayIncludesOtherArray(initialFeatures, filteredFeatures);
+  }
+
+  return false;
+};
+
+const setAllFilters = (items) => {
+  const filteredItems = [];
+  for (let index = 0; index < items.length; index++) {
+    const itemElement = items[index];
+    if (filterByType(itemElement) &&
+    filterByPrice(itemElement) &&
+    filterByRooms(itemElement) &&
+    filterByGuests(itemElement) &&
+    filterByFeatures(itemElement)) {
+      filteredItems.push(itemElement);
     }
   }
-
-  if(filteredFeatures.length === 0) {
-    rank = 1;
-  }
-
-  return rank > 0;
+  return filteredItems.slice(0, DISPLAYED_ADS_NUMBER);
 };
 
-const addFilters = function(items) {
-  const filteredItems = items
-    .slice()
-    .filter(filterByType)
-    .filter(filterByPrice)
-    .filter(filterByRooms)
-    .filter(filterByGuests)
-    .filter(filterByFeatures)
-    .slice(0, DISPLAYED_ADS_NUMBER);
-
-  createMarkers(filteredItems);
-
-  return filteredItems;
+const addFilteredMarkers = (items) => {
+  createMarkers(setAllFilters(items));
+  return setAllFilters(items);
 };
 
-const setFilterTypeChange = (cb) => {
-  housingTypeFilter.addEventListener('change', () => {
+const setFilterFormChange = (cb) => {
+  filterForm.addEventListener('change', () => {
     markerGroup.clearLayers();
     cb();
   });
 };
 
-const setFilterPriceChange = (cb) => {
-  housingPriceFilter.addEventListener('change', () => {
-    markerGroup.clearLayers();
-    cb();
-  });
-};
-
-const setFilterRoomsChange = (cb) => {
-  housingRoomsFilter.addEventListener('change', () => {
-    markerGroup.clearLayers();
-    cb();
-  });
-};
-
-const setFilterGuestsChange = (cb) => {
-  housingGuestsFilter.addEventListener('change', () => {
-    markerGroup.clearLayers();
-    cb();
-  });
-};
-
-const setFilterFeaturesClick = (cb) => {
-  housingFeaturesFilter.addEventListener('click', () => {
-    markerGroup.clearLayers();
-    cb();
-  });
-};
-export {filterForm, addFilters, setFilterTypeChange, setFilterPriceChange, setFilterRoomsChange, setFilterGuestsChange, setFilterFeaturesClick};
+export {filterForm, addFilteredMarkers, setFilterFormChange};

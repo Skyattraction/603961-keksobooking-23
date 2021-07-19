@@ -1,3 +1,8 @@
+import {getWordEndByQuantity} from './utils.js';
+
+const PHOTO_WIDTH = 45;
+const PHOTO_HEIGHT = 40;
+
 const typesMap = {
   'palace': 'Дворец',
   'flat': 'Квартира',
@@ -6,31 +11,13 @@ const typesMap = {
   'hotel': 'Отель',
 };
 
-const mapTypesForCard = function(type) {
-  return typesMap[type];
-};
+const mapTypesForCard = (type) => typesMap[type];
 
-const mapRoomsQuantity = function(roomsNumber) {
-  if(roomsNumber === 1) {
-    return 'комната';
-  } else if (roomsNumber > 1 && roomsNumber < 5) {
-    return 'комнаты';
-  }
-  return 'комнат';
-};
-
-const mapGuestQuantity = function(guestsNumber) {
-  if(guestsNumber === 1) {
-    return 'гостя';
-  }
-  return 'гостей';
-};
-
-const createPhotosList = function(photos, container) {
+const createPhotosList = (photos, container) => {
   for(let ind = 0; ind < photos.length; ind++) {
     const photoElement = document.createElement('img');
-    photoElement.width = 45;
-    photoElement.height = 40;
+    photoElement.width = PHOTO_WIDTH;
+    photoElement.height = PHOTO_HEIGHT;
     photoElement.alt = 'Фотография жилья';
     photoElement.classList.add('popup__photo');
     photoElement.src = photos[ind];
@@ -38,7 +25,7 @@ const createPhotosList = function(photos, container) {
   }
 };
 
-const createFeaturesList = function(features, container) {
+const createFeaturesList = (features, container) => {
   for(let ind = 0; ind < features.length; ind++) {
     const featureElement = document.createElement('li');
     const featureClass = `popup__feature--${features[ind]}`;
@@ -52,39 +39,82 @@ const createFeaturesList = function(features, container) {
 const createCustomPopup = (point) => {
   const cardTemplate = document.querySelector('#card').content.querySelector('.popup');
   const cardElement = cardTemplate.cloneNode(true);
+  const cardTitle = cardElement.querySelector('.popup__title');
+  const cardAddress = cardElement.querySelector('.popup__text--address');
+  const cardPrice = cardElement.querySelector('.popup__text--price');
+  const cardType = cardElement.querySelector('.popup__type');
+  const cardCapacity = cardElement.querySelector('.popup__text--capacity');
+  const cardTime = cardElement.querySelector('.popup__text--time');
+  const cardFeatures = cardElement.querySelector('.popup__features');
+  const cardDescription = cardElement.querySelector('.popup__description');
+  const cardPhotos = cardElement.querySelector('.popup__photos');
+  const cardAvatar = cardElement.querySelector('.popup__avatar');
+
   const rooms = point.offer.rooms;
   const guests = point.offer.guests;
 
-  cardElement.querySelector('.popup__title').textContent = point.offer.title;
-  cardElement.querySelector('.popup__text--address').textContent = point.offer.address;
-  cardElement.querySelector('.popup__text--price').textContent = `${point.offer.price} ₽/ночь`;
-  cardElement.querySelector('.popup__type').textContent = mapTypesForCard(point.offer.type);
-  cardElement.querySelector('.popup__text--capacity').textContent = `${rooms} ${mapRoomsQuantity(rooms)} для ${point.offer.guests} ${mapGuestQuantity(guests)}`;
-  cardElement.querySelector('.popup__text--time').textContent = `Заезд после ${point.offer.checkin}, выезд до  ${point.offer.checkout}`;
-
-  if(point.offer.features) {
-    cardElement.querySelector('.popup__features').innerHTML = '';
-    createFeaturesList(point.offer.features, cardElement.querySelector('.popup__features'));
+  if (point.offer.title) {
+    cardTitle.textContent = point.offer.title;
   } else {
-    cardElement.querySelector('.popup__features').remove();
+    cardTitle.remove();
   }
 
-  if(point.offer.description) {
-    cardElement.querySelector('.popup__description').textContent = point.offer.description;
+  if (point.offer.address) {
+    cardAddress.textContent = point.offer.address;
   } else {
-    cardElement.querySelector('.popup__description').remove();
+    cardAddress.remove();
+  }
+
+  if (point.offer.price) {
+    cardPrice.textContent = `${point.offer.price} ₽/ночь`;
+  } else {
+    cardPrice.remove();
+  }
+
+  if (point.offer.type) {
+    cardType.textContent = mapTypesForCard(point.offer.type);
+  } else {
+    cardType.remove();
+  }
+
+  if (rooms && guests) {
+    cardCapacity.textContent = `${rooms} ${getWordEndByQuantity(rooms, ['комната', 'комнаты', 'комнат'])} для ${guests} ${getWordEndByQuantity(guests, ['гостя', 'гостей', 'гостей'])}`;
+  } else {
+    cardCapacity.remove();
+  }
+
+  if (point.offer.checkin && point.offer.checkout) {
+    cardTime.textContent = `Заезд после ${point.offer.checkin}, выезд до  ${point.offer.checkout}`;
+  } else {
+    cardTime.remove();
+  }
+
+  if (point.offer.features) {
+    cardFeatures.innerHTML = '';
+    createFeaturesList(point.offer.features, cardFeatures);
+  } else {
+    cardFeatures.remove();
+  }
+
+  if (point.offer.description) {
+    cardDescription.textContent = point.offer.description;
+  } else {
+    cardDescription.remove();
   }
 
   if (point.offer.photos) {
-    cardElement.querySelector('.popup__photos').innerHTML = '';
-    createPhotosList(point.offer.photos, cardElement.querySelector('.popup__photos'));
+    cardPhotos.innerHTML = '';
+    createPhotosList(point.offer.photos, cardPhotos);
   } else {
-    cardElement.querySelector('.popup__photos').remove();
+    cardPhotos.remove();
   }
 
-  if(point.author.avatar) {
-    cardElement.querySelector('.popup__avatar').src = point.author.avatar;
+  if (point.author.avatar) {
+    cardAvatar.src = point.author.avatar;
+  } else {
+    cardAvatar.remove();
   }
+
   return cardElement;
 };
 

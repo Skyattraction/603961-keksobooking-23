@@ -5,7 +5,16 @@ const avatarPreview = document.querySelector('.ad-form-header__preview');
 const adPhotoInput = document.querySelector('.ad-form__upload input[type=file]');
 const adPhotoPreview = document.querySelector('.ad-form__photo');
 
-const createFileReader = function(fileField, preview) {
+const filePreviewFields = [
+  {
+    preview: avatarPreview,
+  },
+  {
+    preview: adPhotoPreview,
+  },
+];
+
+const createFileReader = (fileField, preview) => {
   fileField.addEventListener('change', () => {
     const file = fileField.files[0];
     const fileName = file.name.toLowerCase();
@@ -29,5 +38,21 @@ const createFileReader = function(fileField, preview) {
   });
 };
 
+const resetAllFilePreviewFields = () => {
+  filePreviewFields.forEach((fieldItem) => {
+    if(fieldItem.preview.childNodes.length) {
+      fieldItem.preview.childNodes.forEach((childNode) => {
+        if(childNode.style){
+          childNode.style.visibility = '';
+        }
+      });
+    }
+    fieldItem.preview.style.backgroundImage = '';
+    fieldItem.preview.style.backgroundSize = '';
+  });
+};
+
 createFileReader(avatarInput, avatarPreview);
 createFileReader(adPhotoInput, adPhotoPreview);
+
+export {resetAllFilePreviewFields};

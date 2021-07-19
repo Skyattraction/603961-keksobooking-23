@@ -3,6 +3,11 @@ import {initialCoordinatesValue} from '../map.js';
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
 const MAX_ROOM_PRICE = 1000000;
+const MIN_ROOM_PRICE_BUNGALOW = 0;
+const MIN_ROOM_PRICE_FLAT = 1000;
+const MIN_ROOM_PRICE_HOTEL = 3000;
+const MIN_ROOM_PRICE_HOUSE = 5000;
+const MIN_ROOM_PRICE_PALACE = 10000;
 
 const adForm = document.querySelector('.ad-form');
 const adFormSubmitButton = adForm.querySelector('.ad-form__submit');
@@ -24,7 +29,7 @@ let valueRooms;
 let minRoomPrice;
 let timeValue;
 
-const setInitialGuestOptions = function() {
+const setInitialGuestOptions = () => {
   Array.from(adGuestsOptions).forEach((option) => {
     if(option.value !== '1') {
       option.disabled = true;
@@ -34,20 +39,86 @@ const setInitialGuestOptions = function() {
   });
 };
 
-const setAllInitialValues = function() {
+const setInitialRoomsOptions = () => {
+  valueRooms = adRooms.value;
+  switch (valueRooms) {
+    case '1':
+      setInitialGuestOptions();
+      break;
+    case '2':
+      setInitialGuestOptions();
+      Array.from(adGuestsOptions).forEach((option) => {
+        option.disabled = false;
+        if(option.value !== '1' && option.value !== '2' ) {
+          option.disabled = true;
+        }
+      });
+      break;
+    case '3':
+      setInitialGuestOptions();
+      Array.from(adGuestsOptions).forEach((option) => {
+        option.disabled = false;
+        if(option.value === '0' ) {
+          option.disabled = true;
+        }
+      });
+      break;
+    case '100':
+      Array.from(adGuestsOptions).forEach((option) => {
+        option.disabled = false;
+        if(option.value !== '0' ) {
+          option.disabled = true;
+        } else {
+          option.selected = true;
+        }
+      });
+      break;
+    default:
+      throw new Error('Incorrect value');
+  }
+};
+
+const setInitialPriceOptions = () => {
+  adTypeValue = adType.value;
+  adTypeContent = adType.options[adType.selectedIndex].text;
+  switch (adTypeValue) {
+    case 'bungalow':
+      minRoomPrice = MIN_ROOM_PRICE_BUNGALOW;
+      break;
+    case 'flat':
+      minRoomPrice = MIN_ROOM_PRICE_FLAT;
+      break;
+    case 'hotel':
+      minRoomPrice = MIN_ROOM_PRICE_HOTEL;
+      break;
+    case 'house':
+      minRoomPrice = MIN_ROOM_PRICE_HOUSE;
+      break;
+    case 'palace':
+      minRoomPrice = MIN_ROOM_PRICE_PALACE;
+      break;
+    default:
+      throw new Error('Incorrect type');
+  }
+  adPrice.placeholder = minRoomPrice;
+};
+
+const setInitialTimeOptions = () => {
+  timeValue = timeIn.value;
+  timeOut.value = timeValue;
+};
+
+const setAllInitialValues = () => {
   stopSubmit = false;
-  adTypeValue = 'flat';
-  adTypeContent = 'Квартира';
-  valueRooms = 1;
-  minRoomPrice = 1000;
-  timeValue = '12:00';
-  adPrice.placeholder = '1000';
   adAddress.value = initialCoordinatesValue;
-  setInitialGuestOptions();
+  setInitialPriceOptions();
+  setInitialRoomsOptions();
+  setInitialTimeOptions();
   Array.from(inputs).forEach((inputItem) => {
     inputItem.style.border = '';
   });
 };
+
 setAllInitialValues();
 
 adFormSubmitButton.addEventListener('click', (evt) => {
@@ -80,67 +151,11 @@ adTitle.addEventListener('input', () => {
 });
 
 adRooms.addEventListener('change', () => {
-  valueRooms = adRooms.value;
-  switch (valueRooms) {
-    case '1':
-      setInitialGuestOptions();
-      break;
-    case '2':
-      Array.from(adGuestsOptions).forEach((option) => {
-        option.disabled = false;
-        if(option.value !== '1' && option.value !== '2' ) {
-          option.disabled = true;
-        } else if (option.value === '1') {
-          option.selected = true;
-        }
-      });
-      break;
-    case '3':
-      Array.from(adGuestsOptions).forEach((option) => {
-        option.disabled = false;
-        if(option.value === '0' ) {
-          option.disabled = true;
-        }
-      });
-      break;
-    case '100':
-      Array.from(adGuestsOptions).forEach((option) => {
-        option.disabled = false;
-        if(option.value !== '0' ) {
-          option.disabled = true;
-        } else {
-          option.selected = true;
-        }
-      });
-      break;
-    default:
-      throw new Error('Incorrect value');
-  }
+  setInitialRoomsOptions();
 });
 
 adType.addEventListener('change', () => {
-  adTypeValue = adType.value;
-  adTypeContent = adType.options[adType.selectedIndex].text;
-  switch (adTypeValue) {
-    case 'bungalow':
-      minRoomPrice = 0;
-      break;
-    case 'flat':
-      minRoomPrice = 1000;
-      break;
-    case 'hotel':
-      minRoomPrice = 3000;
-      break;
-    case 'house':
-      minRoomPrice = 5000;
-      break;
-    case 'palace':
-      minRoomPrice = 10000;
-      break;
-    default:
-      throw new Error('Incorrect type');
-  }
-  adPrice.placeholder = minRoomPrice;
+  setInitialPriceOptions();
 });
 
 adPrice.addEventListener('input', () => {
@@ -161,8 +176,7 @@ adPrice.addEventListener('input', () => {
 });
 
 timeIn.addEventListener('change', () => {
-  timeValue = timeIn.value;
-  timeOut.value = timeValue;
+  setInitialTimeOptions();
 });
 
 

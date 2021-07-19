@@ -1,23 +1,23 @@
-const disableForm = function(formArray) {
-  for (let ind = 0; ind < formArray.length; ind++) {
-    const form = document.querySelector(`.${formArray[ind]}`);
-    form.classList.add(`${formArray[ind]}--disabled`);
+const disableForm = (formArray) => {
+  formArray.forEach((formElement) => {
+    const form = document.querySelector(`.${formElement}`);
+    form.classList.add(`${formElement}--disabled`);
     const inputs = form.elements;
     Array.from(inputs).forEach((inputItem) => {
       inputItem.disabled = true;
     });
-  }
+  });
 };
 
-const enableForm = function(formArray) {
-  for (let ind = 0; ind < formArray.length; ind++) {
-    const form = document.querySelector(`.${formArray[ind]}`);
-    form.classList.remove(`${formArray[ind]}--disabled`);
+const enableForm = (formArray) => {
+  formArray.forEach((formElement) => {
+    const form = document.querySelector(`.${formElement}`);
+    form.classList.remove(`${formElement}--disabled`);
     const inputs = form.elements;
     Array.from(inputs).forEach((inputItem) => {
       inputItem.disabled = false;
     });
-  }
+  });
 };
 
 disableForm(['ad-form', 'map__filters']);
