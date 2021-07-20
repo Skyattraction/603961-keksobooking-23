@@ -1,6 +1,6 @@
 import {sendData} from '../api.js';
 import {filterForm} from '../filter.js';
-import {map, initialCoordinates, markerGroup, mainPinMarker, getAdObjects} from '../map.js';
+import {map, initialCoordinates, markerGroup, mainPinMarker, getInitialAdObjects} from '../map.js';
 import {resetAllFilePreviewFields} from './form-file-reader.js';
 import {setAllInitialValues} from './form-validation.js';
 
@@ -24,7 +24,7 @@ const resetForm = () => {
   map.closePopup();
   markerGroup.clearLayers();
   resetAllFilePreviewFields();
-  getAdObjects();
+  getInitialAdObjects();
   setAllInitialValues();
   mainPinMarker.setLatLng(initialCoordinates);
 };

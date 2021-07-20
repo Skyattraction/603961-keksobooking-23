@@ -49,10 +49,18 @@ const createMarkers = (items) => {
   });
 };
 
-const getAdObjects = getData(
+const getInitialAdObjects = getData(
   (ads) => {
-    const filteredAdList = ads.slice(0,10);
+    const filteredAdList = ads.slice(0,filters.DISPLAYED_ADS_NUMBER);
     createMarkers(filteredAdList);
+  },
+  () => {
+    showErrorAlert();
+  },
+);
+
+const getFilteredAdObjects = getData(
+  (ads) => {
     filters.setFilterFormChange(debounce(
       () => filters.addFilteredMarkers(ads),
       RERENDER_DELAY,
@@ -66,7 +74,8 @@ const getAdObjects = getData(
 map.on('load', () => {
   enableForm(['ad-form', 'map__filters']);
   adAddress.value = initialCoordinatesValue;
-  getAdObjects();
+  getInitialAdObjects();
+  getFilteredAdObjects();
 })
   .setView(initialCoordinates, MAP_SCALE);
 
@@ -97,4 +106,4 @@ mainPinMarker.on('move', (evt) => {
   adAddress.value = `${coordinates.lat.toFixed(COORDINATES_ROUND_NUMBER)}, ${coordinates.lng.toFixed(COORDINATES_ROUND_NUMBER)}`;
 });
 
-export {initialCoordinates, initialCoordinatesValue, mainPinMarker, map, markerGroup, getAdObjects, createMarkers};
+export {initialCoordinates, initialCoordinatesValue, mainPinMarker, map, markerGroup, getInitialAdObjects, createMarkers};

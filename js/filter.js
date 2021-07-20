@@ -54,6 +54,7 @@ const setAllFilters = (items) => {
   const filteredItems = [];
   for (let index = 0; index < items.length; index++) {
     const itemElement = items[index];
+
     if (filterByType(itemElement) &&
     filterByPrice(itemElement) &&
     filterByRooms(itemElement) &&
@@ -61,13 +62,15 @@ const setAllFilters = (items) => {
     filterByFeatures(itemElement)) {
       filteredItems.push(itemElement);
     }
+    if (filteredItems.length === DISPLAYED_ADS_NUMBER) {
+      break;
+    }
   }
-  return filteredItems.slice(0, DISPLAYED_ADS_NUMBER);
+  return filteredItems;
 };
 
 const addFilteredMarkers = (items) => {
   createMarkers(setAllFilters(items));
-  return setAllFilters(items);
 };
 
 const setFilterFormChange = (cb) => {
@@ -77,4 +80,4 @@ const setFilterFormChange = (cb) => {
   });
 };
 
-export {filterForm, addFilteredMarkers, setFilterFormChange};
+export {filterForm, addFilteredMarkers, setFilterFormChange, DISPLAYED_ADS_NUMBER};
